@@ -16,8 +16,12 @@ export class CountdownComponent implements OnInit, OnDestroy {
 
   constructor(private deadlineService: DeadlineService) {}
   
-  //fetch data from API only once and update the counter locally
+  //new - fetch deadline data from API on page load
   ngOnInit(): void {
+     this.startCountdownWorkflow();
+  }
+
+  private startCountdownWorkflow() {
     this.deadlineService.getDeadline()
       .pipe(
         tap(res => this.secondsLeft$.next(res.secondsLeft)),
@@ -29,13 +33,17 @@ export class CountdownComponent implements OnInit, OnDestroy {
               if (current >= 0) {
                 this.secondsLeft$.next(current);
               }
+               else {
+                // new - deadline passed, get the new deadline
+                this.startCountdownWorkflow();
+              }
             })
           )
         ),
         takeUntil(this.destroy$)//ensure no memory leak when component is destroyed
       )
       .subscribe();
-  }
+  }  
 
   ngOnDestroy(): void {
     this.destroy$.next();
