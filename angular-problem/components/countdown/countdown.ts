@@ -1,3 +1,9 @@
+// Used local storage to avoid API call on browser refresh and if user opens multiple tabs in the browser then deadline will be fetched from local storage instead of API
+// Removed styleURrl from component metadata as I haven't applied any css to this component
+// Added condition (line 82) to handle the next workflow once deadline is passed
+// Created the custom pipe to transform the data that can be used across multiple places. Used HH:mm:ss format for better user experience
+// Created different methods and wrapped ngOnInit code into startCountdownWorkflow method
+
 import { Component, ChangeDetectionStrategy, OnInit, OnDestroy } from '@angular/core';
 import { DeadlineService } from './services/deadline.service';
 import { BehaviorSubject, interval, Subject, switchMap, takeUntil, tap, startWith } from 'rxjs';
@@ -7,7 +13,6 @@ const STORAGE_KEY = 'deadline_expiry';
 @Component({
   selector: 'app-countdown',
   templateUrl: './countdown.component.html',
-  styleUrls: ['./countdown.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush //change detection only updates when we have update from Behavioural Subject
 })
 export class CountdownComponent implements OnInit, OnDestroy {
@@ -76,7 +81,7 @@ export class CountdownComponent implements OnInit, OnDestroy {
 
     if (remainingSec <= 0) {
       localStorage.removeItem(STORAGE_KEY);
-      this.fetchDeadlineFromServer(); // refetch new deadline
+      //continue to next action or refetch new deadline
     }
   }
 
