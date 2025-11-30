@@ -1,5 +1,6 @@
-// Representing each hardware camera as a rectangle: { minDist, maxDist, minLight, maxLight }
+// <improvement> Added fix for selecting cameras that cover the current uncovered distance point and advancing to the farthest right edge among them.
 
+// Representing each hardware camera as a rectangle: { minDist, maxDist, minLight, maxLight }
 // For every possible combination of distance & light, at least one rectangle (hardware camera) must cover it.
 
 type Range = [number, number];
@@ -13,7 +14,7 @@ interface SoftwareCameraRequirement {
   distanceRange: Range;
   lightRange: Range;
 }
-
+const EPS = 1e-9;
 function willSuffice(
   desired: SoftwareCameraRequirement,
   hardware: HardwareCamera[]
@@ -34,7 +35,7 @@ function willSuffice(
     const [dMin, dMax] = cam.distanceRange;
 
     // Skip if camera starts beyond the next uncovered portion
-    if (dMin > coveredDistEnd + 1e-9) {
+    if (dMin > coveredDistEnd + EPS) {
       // Gap found
       return false;
     }
@@ -55,10 +56,13 @@ function willSuffice(
     if (!isLightFullyCovered) {
       return false;
     }
-
-    // Extend distance coverage
-    coveredDistEnd = Math.max(coveredDistEnd, dMax);
-    if (coveredDistEnd >= maxDist) break;
+    // Extend distance coverage to the farthest right edge among overlapping cameras
+    const farthest = Math.max(...overlappingCams.map((c) => c.distanceRange[1]));
+    // Move forward — note we must progress, otherwise infinite loop
+    if (farthest <= coveredDistEnd + EPS) {
+      return false;
+    }
+    coveredDistEnd = farthest;
   }
 
   // Finally ensure we covered till the end of distance
