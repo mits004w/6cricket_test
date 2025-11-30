@@ -1,8 +1,8 @@
-// Used local storage to avoid API call on browser refresh and if user opens multiple tabs in the browser then deadline will be fetched from local storage instead of API
-// Removed styleURrl from component metadata as I haven't applied any css to this component
-// Added condition (line 82) to handle the next workflow once deadline is passed
-// Created the custom pipe to transform the data that can be used across multiple places. Used HH:mm:ss format for better user experience
-// Created different methods and wrapped ngOnInit code into startCountdownWorkflow method
+// <improvement> Used local storage to avoid API call on browser refresh and if user opens multiple tabs in the browser then deadline will be fetched from local storage instead of API
+// <improvement> Removed styleURrl from component metadata as I haven't applied any css to this component
+// <improvement> Added condition (line 82) to handle the next workflow once deadline is passed
+// <improvement> Created the custom pipe to transform the data that can be used across multiple places. Used HH:mm:ss format for better user experience
+// <improvement> Created different methods and wrapped ngOnInit code into startCountdownWorkflow method
 
 import { Component, ChangeDetectionStrategy, OnInit, OnDestroy } from '@angular/core';
 import { DeadlineService } from './services/deadline.service';
